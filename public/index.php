@@ -114,12 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     <h2><?= $view === 'register' ? 'Crie sua conta de teste' : 'Acesse o laboratório' ?></h2>
     <p class="muted"><?= $view === 'register' ? 'Seus registros de teste ficam no MariaDB do aparelho.' : 'Use seu usuário e senha exclusivos do CyberLab.' ?></p>
-    <?php if ($view === 'register'): ?>
-      <aside class="lab-disclosure" role="note" aria-label="Aviso de privacidade do laboratorio">
-        <strong>AVISO DE LABORATÓRIO</strong>
-        <p>Este é um experimento educacional. Nome, e-mail de teste, horários, resultado de login e IP local (quando disponível) podem ficar salvos no Redmi 13C. Sua senha será protegida por um hash, não guardada em texto legível. Use somente uma senha fictícia, nunca a de outra conta.</p>
-      </aside>
-    <?php endif; ?>
+    <aside class="lab-disclosure" role="note" aria-label="Aviso de privacidade do laboratório">
+      <strong>AVISO DE LABORATÓRIO</strong>
+      <p>Este é um experimento educacional. Nome, e-mail de teste, horários, resultados de login e IP local (quando disponível) são registrados no Redmi 13C. A senha é armazenada somente como hash, nunca em texto legível. Use uma senha fictícia exclusiva deste laboratório.</p>
+    </aside>
     <?php if ($error !== ''): ?><div class="alert" role="alert"><?= h($error) ?></div><?php endif; ?>
     <form action="?view=<?= h($view) ?>" method="post" autocomplete="off">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
