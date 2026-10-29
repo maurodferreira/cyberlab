@@ -23,15 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!preg_match('/^[A-Za-z0-9_]{3,32}$/', $username)) {
             $error = 'Usuário deve ter de 3 a 32 letras, números ou sublinhado.';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
-            $error = 'Informe um e-mail de laboratório válido.';
-        } elseif (strlen($password) < 12 || strlen($password) > 256) {
-            $error = 'Use uma senha exclusiva de teste entre 12 e 256 caracteres.';
+            $error = 'Informe um e-mail válido.';
+        } elseif (strlen($password) < 12 || strlen($password) > 255) {
+            $error = 'Use uma senha exclusiva entre 12 e 255 caracteres.';
         } elseif (!$accepted) {
-            $error = 'Leia e aceite as condições de coleta do laboratório.';
+            $error = 'Leia e aceite as condições';
         } else {
             try {
-                $stmt = db()->prepare('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)');
-                $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
+                $stmt = db()->prepare('INSERT INTO users (username, email, password_plain) VALUES (?, ?, ?)');
+                $stmt->execute([$username, $email, $password]);
                 $userId = (int) db()->lastInsertId();
                 log_auth('register', $userId);
                 login_session(['id' => $userId, 'username' => $username, 'role' => 'member']);
@@ -64,10 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     log_auth('rate_limited', null);
                     $error = 'Muitas tentativas. Aguarde 15 minutos antes de tentar novamente.';
                 } else {
-                    $stmt = db()->prepare('SELECT id, username, role, password_hash FROM users WHERE email = ? OR username = ? LIMIT 1');
+                    $stmt = db()->prepare('SELECT id, username, role, password_plain FROM users WHERE email = ? OR username = ? LIMIT 1');
                     $stmt->execute([$identifier, $identifier]);
                     $user = $stmt->fetch();
-                    if (!$user || !password_verify($password, $user['password_hash'])) {
+                    if (!$user || !hash_equals((string) $user['password_plain'], $password)) {
                         log_auth('login_failed', null);
                         $error = 'Usuário ou senha inválidos.';
                     } else {
@@ -121,20 +121,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php if ($view === 'register'): ?>
       <label for="username">Nome de usuário</label>
       <input id="username" name="username" required minlength="3" maxlength="32" pattern="[A-Za-z0-9_]+" placeholder="ex.: aluno_lab01">
-      <label for="email">E-mail de laboratório</label>
+      <label for="email">E-mail</label>
       <input id="email" type="email" name="email" maxlength="254" required placeholder="aluno@example.test">
       <?php else: ?>
       <label for="identifier">Usuário ou e-mail</label>
       <input id="identifier" name="identifier" required maxlength="254" placeholder="Seu usuário de laboratório">
       <?php endif; ?>
-      <label for="password">Senha exclusiva do laboratório</label>
-      <input id="password" type="password" name="password" required <?= $view === 'register' ? 'minlength="12" maxlength="256"' : '' ?> autocomplete="<?= $view === 'register' ? 'new-password' : 'current-password' ?>">
+      <label for="password">Senha </label>
+      <input id="password" type="password" name="password" required <?= $view === 'register' ? 'minlength="12" maxlength="255"' : '' ?> autocomplete="<?= $view === 'register' ? 'new-password' : 'current-password' ?>">
       <?php if ($view === 'register'): ?>
-        <label class="consent"><input type="checkbox" name="consent" value="yes" required><span>Concordo com o armazenamento de nome, e-mail, hash da senha, IP local e horários de autenticação para esta demonstração educacional.</span></label>
+        <label class="consent"><input type="checkbox" name="consent" value="yes" required><span>Concordo com o armazenamento das informações como nome e e-mail</span></label>
       <?php endif; ?>
       <button class="primary" type="submit"><?= $view === 'register' ? 'Criar conta de teste' : 'Entrar no CyberLab' ?><span>→</span></button>
     </form>
-    <p class="notice">Ambiente educacional, não afiliado a provedores de internet. Esta versão libera acesso ao <strong>portal</strong>, não à internet. Sem HTTPS, use somente dados fictícios.</p>
   </section>
 </main>
 </body></html>
