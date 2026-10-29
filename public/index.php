@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Leia e aceite as condições';
         } else {
             try {
-                $stmt = db()->prepare('INSERT INTO users (username, email, password_plain) VALUES (?, ?, ?)');
-                $stmt->execute([$username, $email, $password]);
+                $stmt = db()->prepare('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)');
+                $stmt->execute([$username, $email, password_hash($password, PASSWORD_DEFAULT)]);
                 $userId = (int) db()->lastInsertId();
                 log_auth('register', $userId);
                 login_session(['id' => $userId, 'username' => $username, 'role' => 'member']);
@@ -64,10 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     log_auth('rate_limited', null);
                     $error = 'Muitas tentativas. Aguarde 15 minutos antes de tentar novamente.';
                 } else {
-                    $stmt = db()->prepare('SELECT id, username, role, password_plain FROM users WHERE email = ? OR username = ? LIMIT 1');
+                    $stmt = db()->prepare('SELECT id, username, role, password_hash FROM users WHERE email = ? OR username = ? LIMIT 1');
                     $stmt->execute([$identifier, $identifier]);
                     $user = $stmt->fetch();
-                    if (!$user || !hash_equals((string) $user['password_plain'], $password)) {
+                    if (!$user || !password_verify($password, (string) $user['password_hash'])) {
                         log_auth('login_failed', null);
                         $error = 'Usuário ou senha inválidos.';
                     } else {
@@ -113,7 +113,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <a class="tab <?= $view === 'register' ? 'selected' : '' ?>" href="?view=register">Criar conta</a>
     </div>
     <h2><?= $view === 'register' ? 'Crie sua conta de teste' : 'Acesse o laboratório' ?></h2>
-    <p class="muted"><?= $view === 'register' ? 'Seus registros ficam no MariaDB do aparelho.' : 'Use seu usuário e senha exclusivos do CyberLab.' ?></p>
+    <p class="muted"><?= $view === 'register' ? 'Seus registros de teste ficam no MariaDB do aparelho.' : 'Use seu usuário e senha exclusivos do CyberLab.' ?></p>
+    <?php if ($view === 'register'): ?>
+      <aside class="lab-disclosure" role="note" aria-label="Aviso de privacidade do laboratorio">
+        <strong>AVISO DE LABORATÓRIO</strong>
+        <p>Este é um experimento educacional. Nome, e-mail de teste, horários, resultado de login e IP local (quando disponível) podem ficar salvos no Redmi 13C. Sua senha será protegida por um hash, não guardada em texto legível. Use somente uma senha fictícia, nunca a de outra conta.</p>
+      </aside>
+    <?php endif; ?>
     <?php if ($error !== ''): ?><div class="alert" role="alert"><?= h($error) ?></div><?php endif; ?>
     <form action="?view=<?= h($view) ?>" method="post" autocomplete="off">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">
@@ -130,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label for="password">Senha </label>
       <input id="password" type="password" name="password" required <?= $view === 'register' ? 'minlength="12" maxlength="255"' : '' ?> autocomplete="<?= $view === 'register' ? 'new-password' : 'current-password' ?>">
       <?php if ($view === 'register'): ?>
-        <label class="consent"><input type="checkbox" name="consent" value="yes" required><span>Concordo com o armazenamento das informações como nome e e-mail</span></label>
+        <label class="consent"><input type="checkbox" name="consent" value="yes" required><span>Li o aviso e concordo com o registro dos meus dados de teste neste laboratório.</span></label>
       <?php endif; ?>
       <button class="primary" type="submit"><?= $view === 'register' ? 'Criar conta de teste' : 'Entrar no CyberLab' ?><span>→</span></button>
     </form>
