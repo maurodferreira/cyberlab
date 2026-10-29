@@ -101,23 +101,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <main class="shell auth-shell">
   <section class="intro">
-    <div class="eyebrow"><span class="pulse"></span> REDMI 13C · LABORATÓRIO EDUCACIONAL</div>
-    <div class="mark">C<span>Y</span>BERLAB</div>
+    <div class="mark">CO<span>NN</span>ECT</div>
     <h1>Conectividade com<br><em>consciência.</em></h1>
-    <p>Portal experimental de autenticação e segurança de redes. Use apenas contas e senhas criadas para os testes.</p>
-    <div class="features"><span>◎ Conta de laboratório</span><span>◇ Eventos registrados</span><span>▣ Dados locais</span></div>
+    <p>Portal para se conectar com wifi</p>
+    <div class="features"><span>◎ Crie a conta / Faça Login </span><span>◇ Eventos registrados</span><span>▣ Acesso ao Wifi</span></div>
   </section>
   <section class="panel" aria-label="Autenticação">
     <div class="tabs">
       <a class="tab <?= $view === 'login' ? 'selected' : '' ?>" href="?view=login">Entrar</a>
       <a class="tab <?= $view === 'register' ? 'selected' : '' ?>" href="?view=register">Criar conta</a>
     </div>
-    <h2><?= $view === 'register' ? 'Crie sua conta de teste' : 'Acesse o laboratório' ?></h2>
-    <p class="muted"><?= $view === 'register' ? 'Seus registros de teste ficam no MariaDB do aparelho.' : 'Use seu usuário e senha exclusivos do CyberLab.' ?></p>
-    <aside class="lab-disclosure" role="note" aria-label="Aviso de privacidade do laboratório">
-      <strong>AVISO DE LABORATÓRIO</strong>
-      <p>Este é um experimento educacional. Nome, e-mail de teste, horários, resultados de login e IP local (quando disponível) são registrados no Redmi 13C. A senha é armazenada somente como hash, nunca em texto legível. Use uma senha fictícia exclusiva deste laboratório.</p>
-    </aside>
+    <h2><?= $view === 'register' ? 'Crie sua conta' : 'Acesse o WIFI' ?></h2>
+    <p class="muted"><?= $view === 'register' ? 'Seus registros de teste ficam no MariaDB.' : 'Use seu usuário e senha.' ?></p>
     <?php if ($error !== ''): ?><div class="alert" role="alert"><?= h($error) ?></div><?php endif; ?>
     <form action="?view=<?= h($view) ?>" method="post" autocomplete="off">
       <input type="hidden" name="csrf" value="<?= h(csrf_token()) ?>">

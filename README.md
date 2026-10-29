@@ -1,4 +1,4 @@
-# CyberLab — Portal de laboratório no Redmi 13C
+
 
 Aplicação educacional PHP + MariaDB para **contas próprias de teste**, histórico de login e painel administrativo. Repositório de código; **dados dos participantes nunca devem ser publicados aqui**.
 
@@ -33,7 +33,7 @@ code .
 
 Para trabalhar em uma branch: `git switch feat/auth-mvp` depois de buscar branches com `git fetch origin`.
 
-## Instalar no Termux (Redmi 13C)
+## Instalar no Termux 
 
 O Termux já tem `git`, Apache, PHP, `php-apache` e MariaDB instalados. O usuário `cyberlab_app` precisa ter `SELECT, INSERT, UPDATE, DELETE` em `cyberlab.*`, como configurado nas aulas.
 
@@ -59,7 +59,7 @@ Para testar inicialmente sem tocar no Apache, abra outro terminal Termux:
 php -S 127.0.0.1:8081 -t public
 ```
 
-Acesse `http://127.0.0.1:8081` no navegador do próprio Redmi. Use apenas contas fictícias. O servidor de desenvolvimento do PHP não deve ser exposto a uma rede pública.
+Acesse `http://127.0.0.1:8081`. Use apenas contas fictícias. O servidor de desenvolvimento do PHP não deve ser exposto a uma rede pública.
 
 ### Servir pelo Apache existente
 
