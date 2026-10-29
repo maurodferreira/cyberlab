@@ -1,6 +1,6 @@
 -- Executar como administrador do MariaDB no banco cyberlab.
--- ATENÇÃO: versão DIDÁTICA. A senha é salva em texto puro de propósito (exigência do professor).
--- Nunca usar este modelo em produção nem com senhas reais.
+-- Laboratorio: usar somente contas ficticias. Senhas armazenadas com hash seguro.
+-- Os eventos demonstram o processo sem guardar credenciais em texto puro.
 CREATE DATABASE IF NOT EXISTS cyberlab
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE cyberlab;
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   username VARCHAR(32) NOT NULL,
   email VARCHAR(254) NOT NULL,
-  password_plain VARCHAR(255) NOT NULL COMMENT 'senha',
+  password_hash VARCHAR(255) NOT NULL COMMENT 'hash da senha',
   role ENUM('member', 'admin') NOT NULL DEFAULT 'member',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP NULL DEFAULT NULL,
