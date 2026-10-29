@@ -1,0 +1,10 @@
+# Credenciais locais: NUNCA enviar para o GitHub.
+/config/local.php
+.env
+.env.*
+!/.env.example
+/vendor/
+*.log
+*.sql.gz
+*.dump
+.DS_Store
